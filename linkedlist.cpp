@@ -40,6 +40,9 @@ void list_command();
 // your code here
 
 // BOOK SERVICE
+void members_command();
+void add_member(members **memberHead);
+void display_member(members **memberHead);
 
 // LOAN SERVICE
 // your code here
@@ -66,6 +69,21 @@ int main()
       continue;
     case 2:
       // menu anggota
+      cmd = 0;
+      members_command();
+      cin >> cmd;
+      switch (cmd)
+      {
+      case 1:
+        add_member(&memberHead);
+        break;
+      case 2:
+        display_member(&memberHead);
+        break;
+      default:
+        cout << "Invalid Command";
+        break;
+      }
       continue;
     case 3:
       // menu peminjaman
@@ -105,7 +123,21 @@ void list_command()
 // your code here
 
 // BOOK SERVICE
-// your code here
+void members_command()
+{
+  system("cls");
+  cout << "========= Member Service =========" << endl;
+  cout << "1.\tAdd New Member" << endl;
+  cout << "2.\tDisplay All Member" << endl;
+  cout << "============ command ============" << endl;
+  cout << "Select the menu you want to go: ";
+}
+void add_member(members **memberHead)
+{
+}
+void display_member(members **memberHead)
+{
+}
 
 // LOAN SERVICE
 // your code here
