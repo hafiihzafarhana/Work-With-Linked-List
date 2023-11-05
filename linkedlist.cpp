@@ -37,18 +37,18 @@ void list_command();
 // ENTITIES FUNCTION DECLARATION
 
 // BOOK SERVICE
-// your code here
+void books_command();
 
-// BOOK SERVICE
+// MEMBER SERVICE
 void members_command();
 void add_member(members **memberHead);
 void display_member(members **memberHead);
 
 // LOAN SERVICE
-// your code here
+void loans_command();
 
 // REPORT SERVICE
-// your code here
+void reports_command();
 
 int main()
 {
@@ -66,6 +66,9 @@ int main()
     {
     case 1:
       // menu buku
+      cmd = 0;
+      books_command();
+      cin >> cmd;
       continue;
     case 2:
       // menu anggota
@@ -86,10 +89,14 @@ int main()
       }
       continue;
     case 3:
-      // menu peminjaman
+      // Menu Peminjaman
+      loans_command();
+      cin >> cmd;
       continue;
     case 4:
-      // menu laporan
+      // Menu Laporan 
+      reports_command();
+      cin >> cmd;
       continue;
     case 0:
       break;
@@ -120,9 +127,18 @@ void list_command()
 // ENTITIES FUNCTION INITIATION
 
 // BOOK SERVICE
-// your code here
+void books_command()
+{
+  system("cls");
+  cout << "========= Book Service =========" << endl;
+  cout << "1.\tAdd New Book" << endl;
+  cout << "2.\tDisplay All Book" << endl;
+  cout << "3.\tSearch Book By Title, Author, ISBN" << endl;
+  cout << "============ command ============" << endl;
+  cout << "Select the menu you want to go: ";
+}
 
-// BOOK SERVICE
+// MEMBER SERVICE
 void members_command()
 {
   system("cls");
@@ -140,7 +156,21 @@ void display_member(members **memberHead)
 }
 
 // LOAN SERVICE
-// your code here
+void loans_command()
+{
+  system("cls");
+  cout << "========= Loan Service =========" << endl;
+  cout << "1.\tYour Command" << endl;
+  cout << "============ command ============" << endl;
+  cout << "Select the menu you want to go: ";
+}
 
 // REPORT SERVICE
-// your code here
+void reports_command()
+{
+  system("cls");
+  cout << "========= Report Service =========" << endl;
+  cout << "1.\tYour Command" << endl;
+  cout << "============ command ============" << endl;
+  cout << "Select the menu you want to go: ";
+}
