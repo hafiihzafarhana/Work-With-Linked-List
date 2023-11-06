@@ -54,9 +54,9 @@ void reports_command();
 
 int main()
 {
-  books *bookHead;
-  members *memberHead;
-  loans *loanHead;
+  books *bookHead = nullptr;
+  members *memberHead = nullptr;
+  loans *loanHead = nullptr;
 
   bookHead = nullptr;
 
@@ -111,7 +111,7 @@ int main()
       cin >> cmd;
       continue;
     case 4:
-      // Menu Laporan 
+      // Menu Laporan
       reports_command();
       cin >> cmd;
       continue;
@@ -217,9 +217,58 @@ void members_command()
 }
 void add_member(members **memberHead)
 {
+  int id = 1;
+  string name;
+
+  members *newMember = new members;
+  members *curMember = new members;
+
+  cout << "Please insert name of the new member: ";
+  cin >> name;
+
+  newMember->name = name;
+  newMember->next = nullptr;
+
+  curMember = *memberHead;
+
+  if (curMember == nullptr)
+  {
+    newMember->ID = id;
+    *memberHead = newMember;
+    return;
+  }
+
+  while (curMember->next != nullptr)
+  {
+    curMember = curMember->next;
+  }
+
+  int newId = curMember->ID + id;
+  newMember->ID = newId;
+  curMember->next = newMember;
 }
 void display_member(members **memberHead)
 {
+  members *curMember = *memberHead;
+
+  system("cls");
+  cout << "=============== List of Members ===============" << endl;
+  cout << "ID\tName" << endl;
+
+  if (curMember == nullptr)
+  {
+    cout << "\tNo Members" << endl;
+  }
+  else
+  {
+    while (curMember != nullptr)
+    {
+      cout << curMember->ID << ".\t" << curMember->name << endl;
+      curMember = curMember->next;
+    }
+  }
+
+  system("pause");
 }
 
 // LOAN SERVICE
