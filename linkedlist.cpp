@@ -38,6 +38,8 @@ void list_command();
 
 // BOOK SERVICE
 void books_command();
+void add_book(books **bookHead);
+void display_book(books **bookHead);
 
 // MEMBER SERVICE
 void members_command();
@@ -56,6 +58,8 @@ int main()
   members *memberHead;
   loans *loanHead;
 
+  bookHead = nullptr;
+
   while (true)
   {
     int cmd = 0;
@@ -69,6 +73,19 @@ int main()
       cmd = 0;
       books_command();
       cin >> cmd;
+      switch (cmd)
+      {
+      case 1:
+        add_book(&bookHead);
+        break;
+
+      case 2:
+        display_book(&bookHead);
+        break;
+      
+      default:
+        break;
+      }
       continue;
     case 2:
       // menu anggota
@@ -113,7 +130,7 @@ int main()
 // COMMON FUNCTION INITIATION
 void list_command()
 {
-  system("cls");
+  // system("cls");
   cout << "=============== Menu ===============" << endl;
   cout << "1.\tBook Service" << endl;
   cout << "2.\tMember Service" << endl;
@@ -129,13 +146,63 @@ void list_command()
 // BOOK SERVICE
 void books_command()
 {
-  system("cls");
+  // system("cls");
   cout << "========= Book Service =========" << endl;
   cout << "1.\tAdd New Book" << endl;
   cout << "2.\tDisplay All Book" << endl;
   cout << "3.\tSearch Book By Title, Author, ISBN" << endl;
   cout << "============ command ============" << endl;
   cout << "Select the menu you want to go: ";
+}
+
+// Books **bookHead, akan menunjuk ke element pertama
+void add_book(books **bookHead){
+  // Alokasi memori dinamis untuk objek bertipe Books
+  // Tidak perlu ada pengechekan NULL karena sudah diatur oleh Build in yaitu std::bad_alloc
+  books *pNew = new books;
+  
+  // Deklarasi
+  int isbn;
+  string judl, pengarang;
+
+  cout<<"Masukan Data ISBN: ";
+  cin>>isbn;
+
+  if (isbn < 1) {
+    cout << "Harus angka lebih dari 0" << endl;
+    delete pNew; // Hapus elemen yang sudah dialokasikan karena ggagal
+    return;
+  }
+
+  cout<<"Masukan Data Judul: ";
+  cin>>judl;
+  cout<<"Masukan Data Pengarang: ";
+  cin>>pengarang;
+
+  pNew -> ISBN = isbn;
+  pNew -> judul = judl;
+  pNew -> pengarang = pengarang;
+  pNew -> availability = true;
+
+  // hubungkan data baru dengan elemet awal yang sudah ada atau nullptr
+  pNew -> next = *bookHead;
+
+  // Jadikan data pertama menjadi data terbaru
+  *bookHead = pNew;
+}
+
+void display_book(books **bookHead){
+  books* current;
+  current = *bookHead;
+  while (current != nullptr) {
+        cout << "ISBN: " << current->ISBN << endl;
+        cout << "Judul: " << current->judul << endl;
+        cout << "Pengarang: " << current->pengarang << endl;
+        cout << "Ketersediaan: " << (current->availability ? "Tersedia" : "Tidak Tersedia") << endl;
+
+        // Pindah ke buku berikutnya dalam linked list
+        current = current->next;
+    }
 }
 
 // MEMBER SERVICE
