@@ -46,6 +46,7 @@ void display_member(members **memberHead);
 
 // LOAN SERVICE
 void loans_command(books **bookHead, loans **loanHead, members **memberHead);
+void add_loan(loans **loanHead, int bookISBN, int memberID, const string &loanDate, const string &returnDate);
 void borrow_book(books **bookHead, int ISBN, const string &loanDate, const string &returnDate, int memberID);
 void return_book(books **bookHead, int ISBN, const string &returnDate);
 void display_loans(loans *loanHead);
@@ -227,6 +228,17 @@ void display_loans(loans *loanHead) {
         currentLoan = currentLoan->next;
     }
     cout << "========================" << endl;
+}
+
+void add_loan(loans **loanHead, int bookISBN, int memberID, const string &loanDate, const string &returnDate) {
+    loans *newLoan = new loans;
+    newLoan->bookISBN = bookISBN;
+    newLoan->memberID = memberID;
+    newLoan->loanDate = loanDate;
+    newLoan->returnDate = returnDate;
+    newLoan->next = *loanHead;
+    *loanHead = newLoan;
+    cout << "Loan added successfully." << endl;
 }
 
 void borrow_book(books **bookHead, int ISBN, const string &loanDate, const string &returnDate, int memberID) {
