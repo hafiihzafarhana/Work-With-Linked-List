@@ -175,8 +175,6 @@ void loans_command(books **bookHead, loans **loanHead, members **memberHead) {
         cin >> cmd;
         int memberID, bookISBN;
         string loanDate, returnDate;
-        int returnMemberID, returnBookISBN;
-        string returnReturnDate;
 
         switch (cmd) {
             case 1:
@@ -189,13 +187,11 @@ void loans_command(books **bookHead, loans **loanHead, members **memberHead) {
                 borrow_book(bookHead, bookISBN, loanDate, memberID, loanHead);
                 break;
             case 2:
-                cout << "Enter Member ID: ";
-                cin >> returnMemberID;
                 cout << "Enter Book ISBN: ";
-                cin >> returnBookISBN;
+                cin >> bookISBN;
                 cout << "Enter Return Date (dd-MM-yyyy): ";
-                cin >> returnReturnDate;
-                return_book(bookHead, returnBookISBN, returnReturnDate, loanHead);
+                cin >> returnDate;
+                return_book(bookHead, bookISBN, returnDate, loanHead);
                 break;
             case 3:
                 display_loans(loanHead);
