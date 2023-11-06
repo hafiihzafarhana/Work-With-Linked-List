@@ -47,9 +47,9 @@ void display_member(members **memberHead);
 // LOAN SERVICE
 void loans_command(books **bookHead, loans **loanHead, members **memberHead);
 void add_loan(loans **loanHead, int bookISBN, int memberID, const string &loanDate, const string &returnDate);
-void borrow_book(books **bookHead, int ISBN, const string &loanDate, const string &returnDate, int memberID);
-void return_book(books **bookHead, int ISBN, const string &returnDate);
-void display_loans(loans *loanHead);
+void borrow_book(books **bookHead, int ISBN, const string &loanDate, int memberID, loans **loanHead);
+void return_book(books **bookHead, int ISBN, const string &returnDate, loans **loanHead);
+void display_loans(loans **loanHead);
 
 // REPORT SERVICE
 void reports_command();
@@ -94,7 +94,7 @@ int main()
       continue;
     case 3:
       // Menu Peminjaman
-      loans_command();
+      loans_command(&bookHead, &loanHead, &memberHead);
       cin >> cmd;
       continue;
     case 4:
@@ -173,34 +173,33 @@ void loans_command(books **bookHead, loans **loanHead, members **memberHead) {
 
         int cmd;
         cin >> cmd;
+        int memberID, bookISBN;
+        string loanDate, returnDate;
+        int returnMemberID, returnBookISBN;
+        string returnReturnDate;
+
         switch (cmd) {
-            case 1:            
-                int memberID, bookISBN;
-                string loanDate, returnDate;
+            case 1:
                 cout << "Enter Member ID: ";
                 cin >> memberID;
                 cout << "Enter Book ISBN: ";
                 cin >> bookISBN;
                 cout << "Enter Loan Date (dd-MM-yyyy): ";
                 cin >> loanDate;
-                cout << "Enter Return Date (dd-MM-yyyy): ";
-                cin >> returnDate;
-                borrow_book(bookHead, bookISBN, loanDate, returnDate, memberID);
+                borrow_book(bookHead, bookISBN, loanDate, memberID, loanHead);
                 break;
-            case 2:            
-                int memberID, bookISBN;
-                string returnDate;
+            case 2:
                 cout << "Enter Member ID: ";
-                cin >> memberID;
+                cin >> returnMemberID;
                 cout << "Enter Book ISBN: ";
-                cin >> bookISBN;
+                cin >> returnBookISBN;
                 cout << "Enter Return Date (dd-MM-yyyy): ";
-                cin >> returnDate;
-                return_book(bookHead, bookISBN, returnDate);
+                cin >> returnReturnDate;
+                return_book(bookHead, returnBookISBN, returnReturnDate, loanHead);
                 break;
-            case 3:          
-                display_loans(*loanHead);
-                break;          
+            case 3:
+                display_loans(loanHead);
+                break;
             case 4:
                 return;
             default:
@@ -211,14 +210,14 @@ void loans_command(books **bookHead, loans **loanHead, members **memberHead) {
     }
 }
 
-void display_loans(loans *loanHead) {
-    if (loanHead == nullptr) {
+void display_loans(loans **loanHead) {
+    if (*loanHead == nullptr) {
         cout << "No loans available." << endl;
         return;
     }
 
     cout << "======= Loan List =======" << endl;
-    loans *currentLoan = loanHead;
+    loans *currentLoan = *loanHead;
     while (currentLoan != nullptr) {
         cout << "Book ISBN: " << currentLoan->bookISBN << endl;
         cout << "Member ID: " << currentLoan->memberID << endl;
@@ -241,16 +240,13 @@ void add_loan(loans **loanHead, int bookISBN, int memberID, const string &loanDa
     cout << "Loan added successfully." << endl;
 }
 
-void borrow_book(books **bookHead, int ISBN, const string &loanDate, const string &returnDate, int memberID) {
+void borrow_book(books **bookHead, int ISBN, const string &loanDate, int memberID, loans **loanHead) {
     books *currentBook = *bookHead;
 
     while (currentBook != nullptr) {
         if (currentBook->ISBN == ISBN && currentBook->availability) {
-            currentBook->availability = false; 
-            currentBook->loanDate = loanDate;
-            currentBook->returnDate = returnDate;
-          
-            add_loan(&loanHead, ISBN, memberID, loanDate, returnDate);
+            currentBook->availability = false;
+            add_loan(loanHead, ISBN, memberID, loanDate, "");
             cout << "Book with ISBN " << ISBN << " has been borrowed successfully." << endl;
             return;
         }
@@ -260,14 +256,21 @@ void borrow_book(books **bookHead, int ISBN, const string &loanDate, const strin
     cout << "Book with ISBN " << ISBN << " is not available for borrowing." << endl;
 }
 
-void return_book(books **bookHead, int ISBN, const string &returnDate) {
+void return_book(books **bookHead, int ISBN, const string &returnDate, loans **loanHead) {
     books *currentBook = *bookHead;
 
     while (currentBook != nullptr) {
         if (currentBook->ISBN == ISBN && !currentBook->availability) {
-            currentBook->availability = true; 
-            currentBook->loanDate = "";
-            currentBook->returnDate = returnDate;
+            currentBook->availability = true;
+            loans *currentLoan = *loanHead;
+            while (currentLoan != nullptr) {
+                if (currentLoan->bookISBN == ISBN) {
+                    currentLoan->returnDate = returnDate;
+                    break;
+                }
+                currentLoan = currentLoan->next;
+            }
+
             cout << "Book with ISBN " << ISBN << " has been returned successfully." << endl;
             return;
         }
