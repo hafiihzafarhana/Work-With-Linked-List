@@ -150,7 +150,7 @@ void list_command()
 // BOOK SERVICE
 void books_command()
 {
-  // system("cls");
+  system("cls");
   cout << "========= Book Service =========" << endl;
   cout << "1.\tAdd New Book" << endl;
   cout << "2.\tDisplay All Book" << endl;
@@ -164,6 +164,7 @@ void add_book(books **bookHead){
   // Alokasi memori dinamis untuk objek bertipe Books
   // Tidak perlu ada pengechekan NULL karena sudah diatur oleh Build in yaitu std::bad_alloc
   books *pNew = new books;
+  books *currentBook = *bookHead;
   
   // Deklarasi
   int isbn;
@@ -176,6 +177,14 @@ void add_book(books **bookHead){
     cout << "Harus angka lebih dari 0" << endl;
     delete pNew; // Hapus elemen yang sudah dialokasikan karena ggagal
     return;
+  }
+
+  while (currentBook != nullptr) {
+    if (currentBook->ISBN == isbn) {
+      cout << "ISBN sudah ada" << endl;
+      delete pNew;
+      return;
+    }
   }
 
   cout<<"Masukan Data Judul: ";
@@ -196,6 +205,7 @@ void add_book(books **bookHead){
 }
 
 void display_book(books **bookHead){
+  system("cls");
   books* current;
   current = *bookHead;
   while (current != nullptr) {
@@ -207,6 +217,8 @@ void display_book(books **bookHead){
         // Pindah ke buku berikutnya dalam linked list
         current = current->next;
     }
+
+    system("pause");
 }
 
 // MEMBER SERVICE
@@ -313,6 +325,7 @@ void loans_command(books **bookHead, loans **loanHead, members **memberHead) {
                 display_loans(loanHead);
                 break;
             case 4:
+                list_command();
                 return;
             default:
                 cout << "Invalid command" << endl;
@@ -339,6 +352,7 @@ void display_loans(loans **loanHead) {
         currentLoan = currentLoan->next;
     }
     cout << "========================" << endl;
+    system("pause");
 }
 
 void add_loan(loans **loanHead, int bookISBN, int memberID, const string &loanDate, const string &returnDate) {
