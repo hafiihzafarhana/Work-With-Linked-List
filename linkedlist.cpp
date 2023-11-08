@@ -164,7 +164,7 @@ void add_book(books **bookHead){
   // Alokasi memori dinamis untuk objek bertipe Books
   // Tidak perlu ada pengechekan NULL karena sudah diatur oleh Build in yaitu std::bad_alloc
   books *pNew = new books;
-  books *currentBook = *bookHead;
+  // books *currentBook = *bookHead;
   
   // Deklarasi
   int isbn;
