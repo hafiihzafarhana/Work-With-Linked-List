@@ -179,13 +179,13 @@ void add_book(books **bookHead){
     return;
   }
 
-  while (currentBook != nullptr) {
-    if (currentBook->ISBN == isbn) {
-      cout << "ISBN sudah ada" << endl;
-      delete pNew;
-      return;
-    }
-  }
+  // while (currentBook != nullptr) {
+  //   if (currentBook->ISBN == isbn) {
+  //     cout << "ISBN sudah ada" << endl;
+  //     delete pNew;
+  //     return;
+  //   }
+  // }
 
   cout<<"Masukan Data Judul: ";
   cin>>judl;
