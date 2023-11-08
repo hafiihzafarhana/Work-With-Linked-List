@@ -57,6 +57,7 @@ void display_loans(loans **loanHead);
 
 // REPORT SERVICE
 void reports_command();
+void display_member_borrowed_book(books **bookHead, members **memberHead, loans **loanHead);
 
 int main()
 {
@@ -117,12 +118,24 @@ int main()
     case 3:
       // Menu Peminjaman
       loans_command(&bookHead, &loanHead, &memberHead);
-      cin >> cmd;
       continue;
     case 4:
       // Menu Laporan
       reports_command();
       cin >> cmd;
+      switch (cmd)
+      {
+      case 1:
+        display_loans(&loanHead);
+        break;
+      case 2:
+        display_member_borrowed_book(&bookHead, &memberHead, &loanHead);
+        system("pause");
+        break;
+      default:
+        cout << "Invalid Command";
+        break;
+      }
       continue;
     case 0:
       break;
@@ -139,7 +152,7 @@ int main()
 // COMMON FUNCTION INITIATION
 void list_command()
 {
-  // system("cls");
+  system("cls");
   cout << "=============== Menu ===============" << endl;
   cout << "1.\tBook Service" << endl;
   cout << "2.\tMember Service" << endl;
@@ -176,6 +189,7 @@ void books_command_search(){
 
 // Books **bookHead, akan menunjuk ke element pertama
 void add_book(books **bookHead){
+  system("cls");
   // Alokasi memori dinamis untuk objek bertipe Books
   // Tidak perlu ada pengechekan NULL karena sudah diatur oleh Build in yaitu std::bad_alloc
   books *pNew = new books;
@@ -185,18 +199,18 @@ void add_book(books **bookHead){
   int isbn;
   string judl, pengarang;
 
-  cout<<"Masukan Data ISBN: ";
+  cout<<"Add ISBN Data: ";
   cin>>isbn;
 
   if (isbn < 1) {
-    cout << "Harus angka lebih dari 0" << endl;
+    cout << "Must be a number greater than 0" << endl;
     delete pNew; // Hapus elemen yang sudah dialokasikan karena ggagal
     return;
   }
 
   while (currentBook != nullptr) {
     if (currentBook->ISBN == isbn) {
-      cout << "ISBN sudah ada" << endl;
+      cout << "ISBN already exists" << endl;
       delete pNew;
       return;
     }
@@ -204,10 +218,11 @@ void add_book(books **bookHead){
     currentBook = currentBook->next;
   }
 
-  cout<<"Masukan Data Judul: ";
-  cin>>judl;
-  cout<<"Masukan Data Pengarang: ";
-  cin>>pengarang;
+  cout<<"Title Data Input: ";
+  cin.ignore();
+  getline(cin, judl);
+  cout<<"Author Data Input: ";
+  getline(cin, pengarang);
 
   pNew -> ISBN = isbn;
   pNew -> judul = judl;
@@ -227,10 +242,10 @@ void display_book(books **bookHead){
   current = *bookHead;
   while (current != nullptr) {
         cout << "ISBN: " << current->ISBN << endl;
-        cout << "Judul: " << current->judul << endl;
-        cout << "Pengarang: " << current->pengarang << endl;
-        cout << "Ketersediaan: " << (current->availability ? "Tersedia" : "Tidak Tersedia") << endl;
-
+        cout << "Title: " << current->judul << endl;
+        cout << "Author: " << current->pengarang << endl;
+        cout << "Available: " << (current->availability ? "Yes" : "No") << endl;
+        cout<<endl;
         // Pindah ke buku berikutnya dalam linked list
         current = current->next;
     }
@@ -249,33 +264,37 @@ void search_book_by(books **bookHead){
   {
   case 1:
     int isbn;
-    cout<<"Masukan ISBN yang akan dicari: ";
+    cout<<"Enter the ISBN to look for: ";
     cin>>isbn;
+    cout<<endl;
     while (currentBook != nullptr) {
     if (currentBook->ISBN == isbn) {
-      cout << "Data Buku dengan ISBN " << isbn << " ditemukan:" << endl;
-      cout << "Judul: " << currentBook->judul << endl;
-      cout << "Pengarang: " << currentBook->pengarang << endl;
-      cout << "Ketersediaan: " << (currentBook->availability ? "Tersedia" : "Tidak Tersedia") << endl;
-      return;
+      cout << "Book Data with ISBN " << isbn << endl;
+      cout << "Title: " << currentBook->judul << endl;
+      cout << "Author: " << currentBook->pengarang << endl;
+      cout << "Available: " << (currentBook->availability ? "Yes" : "No") << endl;
+      found = true;
     }
 
     currentBook = currentBook->next;
   }
-    cout << "ISBN " << isbn << " tidak ditemukan dalam daftar buku." << endl;
-    system("pause");
+    if (!found) {
+      cout << "Book Data by ISBN " << isbn << " not found" << endl;
+    }
     break;
 
   case 2:
-    cout << "Masukan nama pengarang yang akan dicari: ";
-    cin >> author;
+    cout << "Enter the name of the author to search for: ";
+    cin.ignore();
+    getline(cin, author);
+    cout<<endl;
+    cout << "Book Data by author " << author << endl <<endl;
     while (currentBook != nullptr) {
-      if (currentBook->pengarang == author) {
-        // Buku dengan nama pengarang yang sesuai ditemukan, cetak informasi buku
-        cout << "Data Buku oleh pengarang " << author << " ditemukan:" << endl;
-        cout << "Judul: " << currentBook->judul << endl;
-        cout << "ISBN: " << currentBook->ISBN << endl;
-        cout << "Ketersediaan: " << (currentBook->availability ? "Tersedia" : "Tidak Tersedia") << endl;
+      if (currentBook->pengarang.find(author) != string::npos) {
+        cout << "Title: " << currentBook->judul << endl;
+        cout << "Author: " << currentBook->pengarang << endl;
+        cout << "Available: " << (currentBook->availability ? "Yes" : "No") << endl;
+        cout<<endl;
         found = true;
       }
 
@@ -283,20 +302,22 @@ void search_book_by(books **bookHead){
     }
 
     if (!found) {
-      cout << "Buku oleh pengarang " << author << " tidak ditemukan dalam daftar buku." << endl;
+      cout << "Book Data by author " << author << " not found" << endl;
     }
     break;
 
   case 3:
-    cout << "Masukan nama buku yang akan dicari: ";
-    cin >> book;
+    cout << "Enter the name of the book you want to search for: ";
+    cin.ignore();
+    getline(cin, book);
+    cout<<endl;
+    cout << "Book name  " << book << endl <<endl;
     while (currentBook != nullptr) {
-      if (currentBook->pengarang == book) {
-        // Buku dengan nama pengarang yang sesuai ditemukan, cetak informasi buku
-        cout << "Nama Buku  " << book << " ditemukan:" << endl;
-        cout << "Judul: " << currentBook->judul << endl;
-        cout << "ISBN: " << currentBook->ISBN << endl;
-        cout << "Ketersediaan: " << (currentBook->availability ? "Tersedia" : "Tidak Tersedia") << endl;
+      if (currentBook->judul.find(book) != string::npos) {
+        cout << "Title: " << currentBook->judul << endl;
+        cout << "Author: " << currentBook->pengarang << endl;
+        cout << "Available: " << (currentBook->availability ? "Yes" : "No") << endl;
+        cout<<endl;
         found = true;
       }
 
@@ -304,15 +325,16 @@ void search_book_by(books **bookHead){
     }
 
     if (!found) {
-      cout << "Nama Buku " << author << " tidak ditemukan dalam daftar buku." << endl;
+      cout << "Book " << book << " Not Found" << endl;
     }
     break;
 
   default:
     cout << "Invalid command" << endl;
-    system("pause");
     break;
   }
+
+  system("pause");
 }
 
 // MEMBER SERVICE
@@ -334,7 +356,8 @@ void add_member(members **memberHead)
   members *curMember = new members;
 
   cout << "Please insert name of the new member: ";
-  cin >> name;
+  cin.ignore();
+  getline(cin, name);
 
   newMember->name = name;
   newMember->next = nullptr;
@@ -383,7 +406,9 @@ void display_member(members **memberHead)
 
 // LOAN SERVICE
 void loans_command(books **bookHead, loans **loanHead, members **memberHead) {
-    while (true) {
+    bool backToMainMenu = false;
+    while (!backToMainMenu) {
+
         system("cls");
         cout << "========= Loan Service =========" << endl;
         cout << "1.\tBorrow a Book" << endl;
@@ -407,6 +432,7 @@ void loans_command(books **bookHead, loans **loanHead, members **memberHead) {
                 cout << "Enter Loan Date (dd-MM-yyyy): ";
                 cin >> loanDate;
                 borrow_book(bookHead, bookISBN, loanDate, memberID, loanHead);
+                system("pause");
                 break;
             case 2:
                 cout << "Enter Book ISBN: ";
@@ -414,13 +440,15 @@ void loans_command(books **bookHead, loans **loanHead, members **memberHead) {
                 cout << "Enter Return Date (dd-MM-yyyy): ";
                 cin >> returnDate;
                 return_book(bookHead, bookISBN, returnDate, loanHead);
+                system("pause");
                 break;
             case 3:
                 display_loans(loanHead);
+                system("pause");
                 break;
             case 4:
-                list_command();
-                return;
+                backToMainMenu = true;
+                break;
             default:
                 cout << "Invalid command" << endl;
                 system("pause");
@@ -432,6 +460,7 @@ void loans_command(books **bookHead, loans **loanHead, members **memberHead) {
 void display_loans(loans **loanHead) {
     if (*loanHead == nullptr) {
         cout << "No loans available." << endl;
+        system("pause");
         return;
     }
 
@@ -505,7 +534,52 @@ void reports_command()
 {
   system("cls");
   cout << "========= Report Service =========" << endl;
-  cout << "1.\tYour Command" << endl;
+  cout << "1.\tPrint loan and return reports" << endl;
+  cout << "2.\tPrint a report of a book being borrowed by a specific member" << endl;
   cout << "============ command ============" << endl;
   cout << "Select the menu you want to go: ";
 }
+
+void display_member_borrowed_book(books **bookHead, members **memberHead, loans **loanHead) {
+    int user_id;
+    bool found = false;
+    cout << "Input User Id: ";
+    cin >> user_id;
+    cout << endl;
+
+    members *currentUser = *memberHead;
+    cout << "With User Id: " << user_id << endl;
+
+    while (currentUser != nullptr) {
+        if (currentUser->ID == user_id) {
+            cout << "With Name: " << currentUser->name << endl;
+            found = true;
+            break;
+        }
+        currentUser = currentUser->next;
+    }
+
+    loans *currentLoans = *loanHead;
+    
+    while (currentLoans != nullptr) {
+        if (currentLoans->memberID == user_id) {
+            books *currentBooks = *bookHead;
+            while (currentBooks != nullptr) {
+                if (currentBooks->ISBN == currentLoans->bookISBN) {
+                    cout << "Book Name: " << currentBooks->judul << endl;
+                    cout << "Date Borrow: " << currentLoans->loanDate << endl;
+                    cout << "Date Return: " << currentLoans->returnDate << endl;
+                }
+                currentBooks = currentBooks->next;
+            }
+        }
+        currentLoans = currentLoans->next;
+    }
+
+    if (!found) {
+        cout << "User Not Found" << endl;
+    } else if (!found && !currentLoans) {
+        cout << "User never read book" << endl;
+    }
+}
+
