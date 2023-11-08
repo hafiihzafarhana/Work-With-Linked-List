@@ -38,8 +38,10 @@ void list_command();
 
 // BOOK SERVICE
 void books_command();
+void books_command_search();
 void add_book(books **bookHead);
 void display_book(books **bookHead);
+void search_book_by(books **bookHead);
 
 // MEMBER SERVICE
 void members_command();
@@ -86,8 +88,11 @@ int main()
       case 2:
         display_book(&bookHead);
         break;
-      
+      case 3:
+        search_book_by(&bookHead);
+        break;
       default:
+        cout << "Invalid Command";
         break;
       }
       continue;
@@ -159,6 +164,16 @@ void books_command()
   cout << "Select the menu you want to go: ";
 }
 
+void books_command_search(){
+  system("cls");
+  cout << "========= Book Search =========" << endl;
+  cout << "1.\tSearch Book By ISBN" << endl;
+  cout << "2.\tSearch Book By Author" << endl;
+  cout << "3.\tSearch Book By Title" << endl;
+  cout << "============ command ============" << endl;
+  cout << "Select the menu you want to go: ";
+}
+
 // Books **bookHead, akan menunjuk ke element pertama
 void add_book(books **bookHead){
   // Alokasi memori dinamis untuk objek bertipe Books
@@ -221,6 +236,83 @@ void display_book(books **bookHead){
     }
 
     system("pause");
+}
+
+void search_book_by(books **bookHead){
+  int chose;
+  string author,book;
+  bool found = false;
+  books *currentBook = *bookHead;
+  books_command_search();
+  cin>>chose;
+  switch (chose)
+  {
+  case 1:
+    int isbn;
+    cout<<"Masukan ISBN yang akan dicari: ";
+    cin>>isbn;
+    while (currentBook != nullptr) {
+    if (currentBook->ISBN == isbn) {
+      cout << "Data Buku dengan ISBN " << isbn << " ditemukan:" << endl;
+      cout << "Judul: " << currentBook->judul << endl;
+      cout << "Pengarang: " << currentBook->pengarang << endl;
+      cout << "Ketersediaan: " << (currentBook->availability ? "Tersedia" : "Tidak Tersedia") << endl;
+      return;
+    }
+
+    currentBook = currentBook->next;
+  }
+    cout << "ISBN " << isbn << " tidak ditemukan dalam daftar buku." << endl;
+    system("pause");
+    break;
+
+  case 2:
+    cout << "Masukan nama pengarang yang akan dicari: ";
+    cin >> author;
+    while (currentBook != nullptr) {
+      if (currentBook->pengarang == author) {
+        // Buku dengan nama pengarang yang sesuai ditemukan, cetak informasi buku
+        cout << "Data Buku oleh pengarang " << author << " ditemukan:" << endl;
+        cout << "Judul: " << currentBook->judul << endl;
+        cout << "ISBN: " << currentBook->ISBN << endl;
+        cout << "Ketersediaan: " << (currentBook->availability ? "Tersedia" : "Tidak Tersedia") << endl;
+        found = true;
+      }
+
+      currentBook = currentBook->next;
+    }
+
+    if (!found) {
+      cout << "Buku oleh pengarang " << author << " tidak ditemukan dalam daftar buku." << endl;
+    }
+    break;
+
+  case 3:
+    cout << "Masukan nama buku yang akan dicari: ";
+    cin >> book;
+    while (currentBook != nullptr) {
+      if (currentBook->pengarang == book) {
+        // Buku dengan nama pengarang yang sesuai ditemukan, cetak informasi buku
+        cout << "Nama Buku  " << book << " ditemukan:" << endl;
+        cout << "Judul: " << currentBook->judul << endl;
+        cout << "ISBN: " << currentBook->ISBN << endl;
+        cout << "Ketersediaan: " << (currentBook->availability ? "Tersedia" : "Tidak Tersedia") << endl;
+        found = true;
+      }
+
+      currentBook = currentBook->next;
+    }
+
+    if (!found) {
+      cout << "Nama Buku " << author << " tidak ditemukan dalam daftar buku." << endl;
+    }
+    break;
+
+  default:
+    cout << "Invalid command" << endl;
+    system("pause");
+    break;
+  }
 }
 
 // MEMBER SERVICE
