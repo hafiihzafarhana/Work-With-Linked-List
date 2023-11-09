@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <conio.h>
 #include <string>
+#include <algorithm>
 
 using namespace std;
 
@@ -276,7 +277,13 @@ void search_book_by(books **bookHead){
     cout<<endl;
     cout << "Book Data by author " << author << endl <<endl;
     while (currentBook != nullptr) {
-      if (currentBook->pengarang.find(author) != string::npos) {
+      string rubahAuthorHurufKecil = currentBook->pengarang;
+      transform(rubahAuthorHurufKecil.begin(), rubahAuthorHurufKecil.end(), rubahAuthorHurufKecil.begin(), ::tolower);
+
+      string rubahSearchHurufKecil = author;
+      transform(rubahSearchHurufKecil.begin(), rubahSearchHurufKecil.end(), rubahSearchHurufKecil.begin(), ::tolower);
+      
+      if (rubahAuthorHurufKecil.find(rubahSearchHurufKecil) != string::npos) {
         cout << "Title: " << currentBook->judul << endl;
         cout << "Author: " << currentBook->pengarang << endl;
         cout << "Available: " << (currentBook->availability ? "Yes" : "No") << endl;
@@ -299,7 +306,13 @@ void search_book_by(books **bookHead){
     cout<<endl;
     cout << "Book name  " << book << endl <<endl;
     while (currentBook != nullptr) {
-      if (currentBook->judul.find(book) != string::npos) {
+      string rubahBookHurufKecil = currentBook->judul;
+      transform(rubahBookHurufKecil.begin(), rubahBookHurufKecil.end(), rubahBookHurufKecil.begin(), ::tolower);
+
+      string rubahSearchHurufKecil = book;
+      transform(rubahSearchHurufKecil.begin(), rubahSearchHurufKecil.end(), rubahSearchHurufKecil.begin(), ::tolower);
+
+      if (rubahBookHurufKecil.find(rubahSearchHurufKecil) != string::npos) {
         cout << "Title: " << currentBook->judul << endl;
         cout << "Author: " << currentBook->pengarang << endl;
         cout << "Available: " << (currentBook->availability ? "Yes" : "No") << endl;
@@ -526,7 +539,7 @@ void reports_command(books** bookHead, loans** loanHead, members** memberHead)
 void LoanedBooksReport(loans** loanHead) {
     cout << "Loaned Books Report:" << endl;
     if (*loanHead == nullptr) {
-        cout << "Tidak Ada Riwayat Peminjaman Buku" << endl;
+        cout << "There are history of borrow some books" << endl;
         system("pause");
         return;
     }
@@ -539,28 +552,31 @@ void LoanedBooksReport(loans** loanHead) {
 }
 
 void LoanedBooksReportByMember(books **bookHead, members **memberHead, loans **loanHead) {
-    int user_id;
-    bool found = false;
-    cout << "Input User Id: ";
-    cin >> user_id;
+    cout << "===== Loaned Book(s) Report by Member ====" << endl;
+    cout << "Enter Member ID: ";
+    int memberID;
+    cin >> memberID;
     cout << endl;
 
-    members *currentUser = *memberHead;
-    cout << "With User Id: " << user_id << endl;
+    members *currentMember = *memberHead;
+    cout << "===== Loaned Book(s) Report by Member ====" << endl;
+    cout << "Member ID: " << memberID << endl;
 
-    while (currentUser != nullptr) {
-        if (currentUser->ID == user_id) {
-            cout << "With Name: " << currentUser->name << endl;
-            found = true;
+    bool data = false;
+
+    while (currentMember != nullptr) {
+        if (currentMember->ID == memberID) {
+            cout << "With Name: " << currentMember->name << endl;
+            data = true;
             break;
         }
-        currentUser = currentUser->next;
+        currentMember = currentMember->next;
     }
 
     loans *currentLoans = *loanHead;
-    
+    bool isThereLoans = false;
     while (currentLoans != nullptr) {
-        if (currentLoans->memberID == user_id) {
+        if (currentLoans->memberID == memberID) {
             books *currentBooks = *bookHead;
             while (currentBooks != nullptr) {
                 if (currentBooks->ISBN == currentLoans->bookISBN) {
@@ -570,13 +586,14 @@ void LoanedBooksReportByMember(books **bookHead, members **memberHead, loans **l
                 }
                 currentBooks = currentBooks->next;
             }
+            isThereLoans = true;
         }
         currentLoans = currentLoans->next;
     }
 
-    if (!found) {
+    if (!data) {
         cout << "User Not Found" << endl;
-    } else if (!found && !currentLoans) {
+    } else if (!isThereLoans) {
         cout << "User never read book" << endl;
     }
 
