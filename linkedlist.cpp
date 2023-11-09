@@ -53,11 +53,11 @@ void loans_command(books **bookHead, loans **loanHead, members **memberHead);
 void add_loan(loans **loanHead, int bookISBN, int memberID, const string &loanDate, const string &returnDate);
 void borrow_book(books **bookHead, int ISBN, const string &loanDate, int memberID, loans **loanHead);
 void return_book(books **bookHead, int ISBN, const string &returnDate, loans **loanHead);
-void display_loans(loans **loanHead);
 
 // REPORT SERVICE
-void reports_command();
-void display_member_borrowed_book(books **bookHead, members **memberHead, loans **loanHead);
+void reports_command(books **bookHead, loans** loanHead, members** memberHead);
+void LoanedBooksReport(loans **loanHead);
+void LoanedBooksReportByMember(books **bookHead, members **memberHead, loans **loanHead);
 
 int main()
 {
@@ -121,21 +121,7 @@ int main()
       continue;
     case 4:
       // Menu Laporan
-      reports_command();
-      cin >> cmd;
-      switch (cmd)
-      {
-      case 1:
-        display_loans(&loanHead);
-        break;
-      case 2:
-        display_member_borrowed_book(&bookHead, &memberHead, &loanHead);
-        system("pause");
-        break;
-      default:
-        cout << "Invalid Command";
-        break;
-      }
+      reports_command(&bookHead, &loanHead, &memberHead);
       continue;
     case 0:
       break;
@@ -413,8 +399,7 @@ void loans_command(books **bookHead, loans **loanHead, members **memberHead) {
         cout << "========= Loan Service =========" << endl;
         cout << "1.\tBorrow a Book" << endl;
         cout << "2.\tReturn a Book" << endl;
-        cout << "3.\tDisplay All Loans" << endl;
-        cout << "4.\tBack to Main Menu" << endl;
+        cout << "3.\tBack to Main Menu" << endl;
         cout << "============ Command ============" << endl;
         cout << "Select the menu you want to go: ";
 
@@ -443,10 +428,6 @@ void loans_command(books **bookHead, loans **loanHead, members **memberHead) {
                 system("pause");
                 break;
             case 3:
-                display_loans(loanHead);
-                system("pause");
-                break;
-            case 4:
                 backToMainMenu = true;
                 break;
             default:
@@ -455,27 +436,6 @@ void loans_command(books **bookHead, loans **loanHead, members **memberHead) {
                 break;
         }
     }
-}
-
-void display_loans(loans **loanHead) {
-    if (*loanHead == nullptr) {
-        cout << "No loans available." << endl;
-        system("pause");
-        return;
-    }
-
-    cout << "======= Loan List =======" << endl;
-    loans *currentLoan = *loanHead;
-    while (currentLoan != nullptr) {
-        cout << "Book ISBN: " << currentLoan->bookISBN << endl;
-        cout << "Member ID: " << currentLoan->memberID << endl;
-        cout << "Loan Date: " << currentLoan->loanDate << endl;
-        cout << "Return Date: " << currentLoan->returnDate << endl;
-        cout << "------------------------" << endl;
-        currentLoan = currentLoan->next;
-    }
-    cout << "========================" << endl;
-    system("pause");
 }
 
 void add_loan(loans **loanHead, int bookISBN, int memberID, const string &loanDate, const string &returnDate) {
@@ -530,17 +490,55 @@ void return_book(books **bookHead, int ISBN, const string &returnDate, loans **l
 }
 
 // REPORT SERVICE
-void reports_command()
+void reports_command(books** bookHead, loans** loanHead, members** memberHead)
 {
-  system("cls");
-  cout << "========= Report Service =========" << endl;
-  cout << "1.\tPrint loan and return reports" << endl;
-  cout << "2.\tPrint a report of a book being borrowed by a specific member" << endl;
-  cout << "============ command ============" << endl;
-  cout << "Select the menu you want to go: ";
+  while (true) {
+        system("cls");
+        cout << "========= Report Service =========" << endl;
+        cout << "1.\tLoaned Books Report" << endl;
+        cout << "2.\tLoaned Books Report By Member" << endl;
+        cout << "3.\tBack to Main Menu" << endl;
+        cout << "============ command ============" << endl;
+        cout << "Select the menu you want to go: ";
+        int cmd;
+        cin >> cmd;
+        int memberID;
+
+        switch (cmd) {
+        case 1:
+            LoanedBooksReport(loanHead);
+            break;
+            return;
+        case 2:
+            LoanedBooksReportByMember(bookHead, memberHead, loanHead);
+            break;
+        case 3:
+            list_command();
+            return;
+        default:
+            cout << "Invalid Command" << endl;
+            system("pause");
+            break;
+        }
+    }
 }
 
-void display_member_borrowed_book(books **bookHead, members **memberHead, loans **loanHead) {
+void LoanedBooksReport(loans** loanHead) {
+    cout << "Loaned Books Report:" << endl;
+    if (*loanHead == nullptr) {
+        cout << "Tidak Ada Riwayat Peminjaman Buku" << endl;
+        system("pause");
+        return;
+    }
+    loans* currentLoan = *loanHead;
+    while (currentLoan != nullptr) {
+        cout << "Loan Date: " << currentLoan->loanDate << " | Member ID: " << currentLoan->memberID << " | ISBN: " << currentLoan->bookISBN << " | Return Date: " << currentLoan->returnDate << endl;
+        currentLoan = currentLoan->next;
+    }
+    system("pause");
+}
+
+void LoanedBooksReportByMember(books **bookHead, members **memberHead, loans **loanHead) {
     int user_id;
     bool found = false;
     cout << "Input User Id: ";
@@ -581,5 +579,7 @@ void display_member_borrowed_book(books **bookHead, members **memberHead, loans 
     } else if (!found && !currentLoans) {
         cout << "User never read book" << endl;
     }
+
+    system("pause");
 }
 
