@@ -539,7 +539,7 @@ void reports_command(books** bookHead, loans** loanHead, members** memberHead)
 void LoanedBooksReport(loans** loanHead) {
     cout << "Loaned Books Report:" << endl;
     if (*loanHead == nullptr) {
-        cout << "There are history of borrow some books" << endl;
+        cout << "There are no history of borrow some books" << endl;
         system("pause");
         return;
     }
